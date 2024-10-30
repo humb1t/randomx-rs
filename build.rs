@@ -20,20 +20,19 @@
 // WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-use std::{
-    env
-};
+use std::env;
 
 use cmake::Config;
 
 #[allow(clippy::too_many_lines)]
 fn main() {
-    let randomx_path = Config::new(env::var("RANDOMX_DIR").unwrap_or_else(|_| format!("{}/RandomX", &cargo_dir)))
-        .define("DARCH", "native").build();
+    let randomx_path = Config::new(env::var("RANDOMX_DIR").unwrap_or_else(|_| "RandomX".to_string()))
+        .define("DARCH", "native")
+        .build();
     println!("cargo:rustc-link-search=native={}/lib", randomx_path.display());
     println!("cargo:rustc-link-lib=static=randomx");
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap_or("linux".to_string());
-    let dylib_name = match target_os {
+    let dylib_name = match target_os.as_str() {
         "macos" | "ios" => "c++",
         _ => "stdc++",
     };
